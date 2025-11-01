@@ -6,7 +6,7 @@ OR='\033[1;93m'
 ipsaya=$(wget -qO- ipinfo.io/ip)
 data_server=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
 date_list=$(date +"%Y-%m-%d" -d "$data_server")
-data_ip="https://raw.githubusercontent.com/joytun21/scjoy/main/izin"
+data_ip="https://raw.githubusercontent.com/Guesswho44/izinsc/main/izin"
 ISP=$(cat /etc/xray/isp)
 CITY=$(cat /etc/xray/city)
 domain=$(cat /etc/xray/domain)
@@ -77,5 +77,6 @@ mv * /usr/bin >/dev/null 2>&1
 # Bersih-bersih
 rm -rf /etc/menu >/dev/null 2>&1
 rm -f menu.zip >/dev/null 2>&1
+
 
 echo "Proses instalasi selesai."
