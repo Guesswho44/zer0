@@ -1,0 +1,379 @@
+#!/bin/bash
+
+# ===============================
+# DAPATKAN IP DAN TANGGAL
+# ===============================
+ipsaya=$(curl -sS ipv4.icanhazip.com)
+data_server=$(curl -v --insecure --silent https://google.com/ 2>&1 | grep Date | sed -e 's/< Date: //')
+date_list=$(date +"%Y-%m-%d" -d "$data_server")
+url_izin="https://raw.githubusercontent.com/Guesswho44/izinsc/main/izin"
+
+# ===============================
+# CEK PERMISSION SCRIPT
+# ===============================
+checking_sc() {
+  useexp=$(wget -qO- $url_izin | grep $ipsaya | awk '{print $3}')
+  if [[ "$date_list" < "$useexp" ]]; then
+    echo -ne
+  else
+    echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+    echo -e "\033[42m          404 NOT FOUND AUTOSCRIPT          \033[0m"
+    echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+    echo -e ""
+    echo -e "            ${RED}PERMISSION DENIED !${neutral}"
+    echo -e "   \033[0;33mYour VPS${neutral} $ipsaya \033[0;33mHas been Banned${neutral}"
+    echo -e "     \033[0;33mBuy access permissions for scripts${neutral}"
+    echo -e "             \033[0;33mContact Admin :${neutral}"
+    echo -e "      ${GREEN}WhatsApp${neutral} wa.me/6283877140463"
+    echo -e "\033[1;93m────────────────────────────────────────────\033[0m"
+    sleep 5
+    reboot
+  fi
+}
+checking_sc
+
+# ===============================
+# AMBIL DATA CLIENT
+# ===============================
+MYIP=$ipsaya
+username=$(curl -sS $url_izin | grep $MYIP | awk '{print $2}')
+valid=$(curl -sS $url_izin | grep $MYIP | awk '{print $3}')
+
+echo "$username" >/usr/bin/user
+echo "$valid" >/usr/bin/e
+
+# ===============================
+# TANGGAL HARI INI DAN EXPIRY
+# ===============================
+today=$(date +'%Y-%m-%d')
+Exp1="$valid"  # tanggal expiry
+
+# ===============================
+# FUNGSI HITUNG SELISIH HARI & FORMAT TANGGAL
+# ===============================
+datediff() {
+    local d1=$(date -d "$1" +%s)
+    local d2=$(date -d "$2" +%s)
+    local diff=$(( (d1 - d2) / 86400 ))
+    diff=${diff#-}  # selalu positif
+    local formatted=$(date -d "$1" +'%d-%m-%Y')
+    echo "$diff day | $formatted"
+}
+
+# ===============================
+# CEK STATUS ACTIVE / EXPIRED
+# ===============================
+Info="(${green}Active${neutral})"
+Error="(${r}Expired${neutral})"
+if [[ "$today" < "$Exp1" ]]; then
+    sts="${Info}"
+else
+    sts="${Error}"
+fi
+
+# Color variables
+        green="\e[38;5;82m"
+        red="\e[38;5;196m"
+        neutral="\e[0m"
+        orange="\e[38;5;130m"
+        blue="\e[38;5;39m"
+        yellow="\e[38;5;226m"
+        purple="\e[38;5;141m"
+        bold_white="\e[1;37m"
+        reset="\e[0m"
+        pink="\e[38;5;205m"
+        
+
+# warna gelap
+dark_gray="\e[38;5;240m"
+dark_blue="\e[38;5;18m"
+dark_red="\e[38;5;88m"
+dark_green="\e[38;5;22m"
+dark_orange="\e[38;5;94m"
+dark_purple="\e[38;5;54m"
+dark_cyan="\e[38;5;30m"
+dark_blue_bg="\e[48;5;18m"
+
+# warna terang
+light_gray="\e[38;5;250m"
+light_blue="\e[38;5;81m"
+light_red="\e[38;5;210m"
+light_green="\e[38;5;120m"
+light_orange="\e[38;5;215m"
+light_purple="\e[38;5;177m"
+light_cyan="\e[38;5;159m"
+light_yellow="\e[38;5;229m"
+print_rainbow() {
+            local text="$1"
+    local length=${#text}
+    local start_color=(0 5 0)   # kuning gelap
+    local mid_color=(255 255 0)     # kuning terang
+    local end_color=(0 5 0)     # kuning gelap
+
+    for ((i = 0; i < length; i++)); do
+        local progress=$((i * 100 / (length - 1)))
+        if [ $progress -lt 50 ]; then
+            local factor=$((progress * 2))
+            r=$(( (start_color[0] * (100 - factor) + mid_color[0] * factor) / 100 ))
+            g=$(( (start_color[1] * (100 - factor) + mid_color[1] * factor) / 100 ))
+            b=$(( (start_color[2] * (100 - factor) + mid_color[2] * factor) / 100 ))
+        else
+            local factor=$(((progress - 50) * 2))
+            r=$(( (mid_color[0] * (100 - factor) + end_color[0] * factor) / 100 ))
+            g=$(( (mid_color[1] * (100 - factor) + end_color[1] * factor) / 100 ))
+            b=$(( (mid_color[2] * (100 - factor) + end_color[2] * factor) / 100 ))
+        fi
+        printf "\e[38;2;%d;%d;%dm%s" "$r" "$g" "$b" "${text:$i:1}"
+    done
+    echo -e "$reset"
+}
+
+        # Function to count accounts
+        count_accounts() {
+            if [ ! -e "/etc/xray/$1/.$1.db" ]; then
+                mkdir -p "/etc/xray/$1"
+                touch "/etc/xray/$1/.$1.db"
+            fi
+
+            accounts=$(cat "/etc/xray/$1/.$1.db")
+            if [[ $accounts = "" ]]; then
+                echo "0"
+            else
+                cat "/etc/xray/$1/.$1.db" | grep "###" | wc -l
+            fi
+        }
+
+        # Count accounts
+        # Fungsi pewarna
+colorize() {
+  local val=$1
+  if [[ $val -eq 0 ]]; then
+    echo -e "${red}$val${neutral}"
+  else
+    echo -e "${green}$val${neutral}"
+  fi
+}
+
+# Count accounts
+        vm=$(count_accounts "vmess")
+        vl=$(count_accounts "vless")
+        tr=$(count_accounts "trojan")
+        ss=$(count_accounts "shadowsocks")
+        ssh=$(cat "/etc/ssh/.ssh.db" | grep "###" | wc -l)
+        # Hitung total
+        total=$((ssh + vm + vl + tr + ss))
+
+# Hitung nilai berwarna
+ssh_c=$(colorize $ssh)
+vm_c=$(colorize $vm)
+vl_c=$(colorize $vl)
+tr_c=$(colorize $tr)
+ss_c=$(colorize $ss)
+total_c="${yellow}${total}${neutral}"
+        
+        # Check service status
+ cek_status() {
+            status=$(systemctl is-active --quiet $1 && echo "aktif" || echo "nonaktif")
+            if [ "$status" = "aktif" ]; then
+                echo -e "${green}ON${neutral}"
+            else
+                echo -e "${red}OFF${neutral}"
+            fi
+        }       
+sts_vmess=$(cek_status vmess@config)
+sts_nginx=$(cek_status nginx)
+sts_ssh=$(cek_status ssh)
+
+if [[ $sts_vmess == *"ON"* && $sts_nginx == *"ON"* && $sts_ssh == *"ON"* ]]; then
+    final_status="${green}GOOD${neutral}"
+else
+    final_status="${red}ERROR${neutral}"
+fi
+
+
+setup_bot_telegram() {
+clear
+echo -e "${dark_orange}─────────────────────────────────────────${neutral}"
+echo -e "${green}           SETUP BOT TELEGRAM         ${neutral}"
+echo -e "${dark_orange}─────────────────────────────────────────${neutral}"
+echo -e ""
+read -p "Masukkan token bot telegram Anda: " bot_token
+read -p "Masukkan chat ID Anda: " chat_id
+if [[ -z "$bot_token" || -z "$chat_id" ]]; then
+echo -e "${red}Token bot atau chat ID tidak boleh kosong.${neutral}"
+return
+fi
+if [ -f /root/.vars ]; then
+rm -f /root/.vars
+fi
+echo "bot_token=\"$bot_token\"" >> /root/.vars
+echo "telegram_id=\"$chat_id\"" >> /root/.vars
+systemctl restart limitip > /dev/null 2>&1
+echo -e "${dark_purple}─────────────────────────────────────────"
+echo -e "${green}Token bot dan chat ID telah disimpan di /root/.vars${neutral}"
+read -n 1 -s -r -p "Press any key to return to the menu"
+}
+
+xray_update() {
+  clear
+  echo -e "${orange}──────────────────────────────────────${neutral}"
+  echo -e "        ${bold}${green} UPDATE VERSI XRAY ${neutral}       "
+  echo -e "${orange}──────────────────────────────────────${neutral}"
+
+  read -r -p "Masukkan versi Xray (misal: 1.8.3 / 25.2.18): " versi
+  if [[ -z "$versi" ]]; then
+    echo -e "${red} Versi tidak boleh kosong!${neutral}"
+    return 1
+  fi
+
+  echo -e "${green} Mengupdate Xray ke versi $versi ...${neutral}"
+
+  # Backup binary lama jika ada
+  [[ -f /usr/local/bin/xray ]] && sudo mv /usr/local/bin/xray "/usr/local/bin/xray.bak.$(date +%s)"
+
+  # Unduh installer ke tmp
+  tmp_installer="/tmp/xray_install.sh"
+  if ! curl -fsSL "https://github.com/XTLS/Xray-install/raw/main/install-release.sh" -o "$tmp_installer"; then
+    echo "Gagal mengunduh installer Xray."
+    return 1
+  fi
+
+  # Fungsi loading
+  show_loading() {
+    local pid=$1
+    local message=$2
+    local delay=0.1
+    local spinstr='|/-\'
+    while kill -0 "$pid" 2>/dev/null; do
+      local temp=${spinstr#?}
+      printf " %s [%c]  " "$message" "$spinstr"
+      spinstr=$temp${spinstr%"$temp"}
+      sleep $delay
+      printf "\r"
+    done
+    printf "    \n"
+  }
+
+  # Jalankan installer di background dan tampilkan loading
+  sudo bash "$tmp_installer" install -u www-data --version "$versi" >/dev/null 2>&1 &
+  pid_installer=$!
+  show_loading "$pid_installer" "Installing Xray..."
+
+  rm -f "$tmp_installer"
+
+  # Nonaktifkan "enabled": true -> false jika ada
+  for cfg in /etc/xray/vmess/config.json \
+             /etc/xray/vless/config.json \
+             /etc/xray/trojan/config.json \
+             /etc/xray/shadowsocks/config.json; do
+    [[ -f "$cfg" ]] && sudo sed -i 's/"enabled"[[:space:]]*:[[:space:]]*true/"enabled": false/g' "$cfg"
+  done
+
+  # Restart semua protokol Xray
+  echo -e "${blue}Restarting semua protokol Xray...${neutral}"
+  sudo systemctl restart vmess@config vless@config trojan@config shadowsocks@config
+
+  echo -e "${green} Xray berhasil diperbarui ke versi $versi dan semua protokol direstart.${neutral}"
+}
+      
+            clear
+            # Display menu
+            # Fungsi untuk random warna gradient
+rand_color() {
+  colors=(16 22 28 34 40 46 52 58 64 70 76 82 88 94 100 106 112 118 124 130 136 142 148 154 160 166 172 178 184 190 196 202 208 214 220 226 232 238 244 250)
+  echo "${colors[$RANDOM % ${#colors[@]}]}"
+}
+print_names() {
+    local text="$1"
+    local length=${#text}
+    local start_color=(200 200 0)  # Kuning gelap
+    local mid_color=(255 255 0)    # Kuning terang
+    local end_color=(200 200 0)    # Kuning gelap
+
+    for ((i = 0; i < length; i++)); do
+        local progress=$((i * 100 / (length - 1)))
+
+        if [ $progress -lt 50 ]; then
+            local factor=$((progress * 2))
+            r=$(( (start_color[0] * (100 - factor) + mid_color[0] * factor) / 100 ))
+            g=$(( (start_color[1] * (100 - factor) + mid_color[1] * factor) / 100 ))
+            b=$(( (start_color[2] * (100 - factor) + mid_color[2] * factor) / 100 ))
+        else
+            local factor=$(((progress - 50) * 2))
+            r=$(( (mid_color[0] * (100 - factor) + end_color[0] * factor) / 100 ))
+            g=$(( (mid_color[1] * (100 - factor) + end_color[1] * factor) / 100 ))
+            b=$(( (mid_color[2] * (100 - factor) + end_color[2] * factor) / 100 ))
+        fi
+
+        printf "\e[38;2;%d;%d;%dm%s" "$r" "$g" "$b" "${text:$i:1}"
+    done
+    echo -e "\e[0m" # Reset warna
+}
+        
+display_menu() {
+clear
+
+# Random warna untuk header dan garis
+color1=$(rand_color)
+color2=$(rand_color)
+color3=$(rand_color)
+header_bg="\e[48;5;${color1}m"
+line_color="\e[38;5;${color2}m"
+text_color="\e[38;5;${color3}m"
+
+# Header dinamis
+            echo -e "   ${orange}─────────────────────────────────────────────${neutral}"
+            echo -e "   ${dark_blue_bg}              ${green}XTRIMER TUNNELING              ${neutral}"
+            echo -e "   ${orange}─────────────────────────────────────────────${neutral}"
+# Sistem
+            echo -e "    ${red}• ${neutral}SYSTEM   : ${neutral}$(grep -w PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '"')${neutral}"
+            echo -e "    ${red}• ${neutral}RAM      : ${neutral}$(free -m | awk 'NR==2 {print $3 "MB / " $2 "MB"}')${neutral}"
+            echo -e "    ${red}• ${neutral}UPTIME   : ${neutral}$(uptime -p | cut -d ' ' -f 2-10000)${neutral}"
+            echo -e "    ${red}• ${neutral}CPU CORE : ${neutral}$(nproc)${neutral}"
+            echo -e "    ${red}• ${neutral}ISP      : ${neutral}$(cat /etc/xray/isp 2>/dev/null | cut -d ' ' -f 1-2 || echo "Unable to detect ISP")${neutral}"
+            echo -e "    ${red}• ${neutral}CITY     : ${neutral}$(cat /etc/xray/city 2>/dev/null || echo "Unable to detect city")${neutral}"
+            echo -e "    ${red}• ${neutral}IP VPS   : ${neutral}$(wget -qO- ipv4.icanhazip.com 2>/dev/null || curl -s ipv4.icanhazip.com || echo "Unable to detect IP")${neutral}"
+            echo -e "    ${red}• ${neutral}DOMAIN   : ${neutral}$(head -n1 /etc/xray/domain 2>/dev/null || echo "No domain")${neutral}"
+# Status Service
+            echo -e "   ${orange}─────────────────────────────────────────────${neutral}"
+            echo -e "    ${neutral}XRAY/V2RAY : $sts_vmess ${orange}│ ${neutral}NGINX : $sts_nginx ${orange}│ ${neutral}SSHOVPN : $sts_ssh  ${neutral}"
+            echo -e "   ${orange}─────────────────────────────────────────────${neutral}"
+            print_rainbow "        ┌─────────────────────────────────┐"
+            printf "             %-11s : %-3s %-6s\n" "SSH/OPENVPN" "$ssh" "ACCOUNT"
+            printf "             %-11s : %-3s %-6s\n" "VMESS XRAY" "$vm" "ACCOUNT"
+            printf "             %-11s : %-3s %-6s\n" "VLESS XRAY" "$vl" "ACCOUNT"
+            printf "             %-11s : %-3s %-6s\n" "TRJAN XRAY" "$tr" "ACCOUNT"
+            printf "             %-11s : %-3s %-6s\n" "SHADOWSOCKS" "$ss" "ACCOUNT"
+            print_rainbow "        └─────────────────────────────────┘"   
+            
+            echo -e "   ${orange}─────────────────────────────────────────────${neutral}"
+            echo -e "    ${green}[1]${neutral} $(print_names "SERVICE SSH")     ${green}[5]${neutral} $(print_names "SERVICE SHADOWSCKS") ${neutral}"
+            echo -e "    ${green}[2]${neutral} $(print_names "SERVICE VMESS")   ${green}[6]${neutral} $(print_names "NOTIF BOT TELEGRAM")        ${neutral}"
+            echo -e "    ${green}[3]${neutral} $(print_names "SERVICE VLESS")   ${green}[7]${neutral} $(print_names "BOT PANEL TELEGRAM")     ${neutral}"
+            echo -e "    ${green}[4]${neutral} $(print_names "SERVICE TROJAN")  ${green}[8]${neutral} $(print_names "UPDATE VERSI XRAY")      ${neutral}"
+            echo -e "    ${green}[9]${neutral} $(print_names "EXTRA FEATURES")  ${green}[X]${neutral} $(print_names "EXIT")             ${neutral}"
+            echo -e "   ${orange}─────────────────────────────────────────────${neutral}"                         
+            
+            print_rainbow "   ─────────────────────────────────────────────"
+            echo -e "    ${yellow}• ${neutral}ID CLIENTS : ${neutral}$username ${green}${sts}"            
+            echo -e "    ${green}• ${neutral}SC EXPIRED : ${neutral}${green}$(datediff "$Exp1" "$today")"            
+            print_rainbow "   ─────────────────────────────────────────────"
+            
+             
+read -p "  Pick a number (1-9) or hit 'x': " choice
+echo -e ""
+case $choice in
+    1 | 01) menussh ;;
+    2 | 02) menuvmess ;;
+    3 | 03) menuvless ;;
+    4 | 04) menutrojan ;;
+    5 | 05) menushadowsocks ;;
+    6 | 06) setup_bot_telegram ;;
+    7 | 07) bot server ;;
+    8 | 08) xray_update ;;
+    9 | 09) features ;;    
+    x | X) echo -e "       ${green}Thank you for using our service.${neutral}"; exit 0 ;;
+    *) echo -e "       ${red}Invalid choice. Please try again.${neutral}"; sleep 2; display_menu ;;
+esac
+}
+display_menu
