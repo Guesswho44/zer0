@@ -3,9 +3,9 @@ sysctl -w net.ipv6.conf.default.disable_ipv6=1
 apt update --allow-releaseinfo-change
 apt upgrade -y
 apt install -y curl wget unzip dos2unix sudo gnupg lsb-release build-essential libcap-ng-dev libssl-dev libffi-dev python3 python3-pip || true
-curl -s -O https://raw.githubusercontent.com/Guesswho44/zer0/main/lite.sh
-chmod +x lite.sh
-./lite.sh
+curl -s -O https://raw.githubusercontent.com/Guesswho44/zer0/main/install.sh
+chmod +x install.sh
+./install.sh
 
 ## jika gagal pakai yang ini
 ```
