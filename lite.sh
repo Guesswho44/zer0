@@ -429,7 +429,7 @@ echo "Memulai proses instalasi, mohon tunggu..."
 mkdir -p /etc/menu
 cd /etc/menu
 
-url="https://github.com/Guesswho44/xD/tree/main/SSH/project.zip"
+url="https://github.com/Guesswho44/zer0/tree/main/project.zip"
 
 wget -O menu.zip "$url" >/dev/null 2>&1 &
 PID=$!
@@ -975,3 +975,4 @@ echo -e "${gray}Silakan reboot server Anda dengan 'enter'.${neutral}"
 echo -e "${orange}─────────────────────────────────────────${neutral}"
 read -p "Tekan enter untuk reboot server..."
 reboot
+
