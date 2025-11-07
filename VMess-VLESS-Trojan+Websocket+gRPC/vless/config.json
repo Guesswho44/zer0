@@ -42,7 +42,7 @@
         "streamSettings": {
           "network": "ws",
           "wsSettings": {
-            "path": "/"
+            "path": "/vless"
           }
         },
         "sniffing": {
