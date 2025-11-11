@@ -34,7 +34,7 @@
           "decryption":"none",
             "clients": [
                {
-                 "id": "1d1c1d94-6987-4658-a4dc-8821a30fe7e0"
+                 "id": "e6860104-cfbd-419e-ae29-7d59a7a09753"
 #vless
              }
           ]
@@ -42,7 +42,7 @@
         "streamSettings": {
           "network": "ws",
           "wsSettings": {
-            "path": "/vless"
+            "path": "/"
           }
         },
         "sniffing": {
@@ -58,7 +58,7 @@
          "decryption":"none",
            "clients": [
              {
-               "id": "1d1c1d94-6987-4658-a4dc-8821a30fe7e0"
+               "id": "e6860104-cfbd-419e-ae29-7d59a7a09753"
 #vlessgrpc
              }
           ]
